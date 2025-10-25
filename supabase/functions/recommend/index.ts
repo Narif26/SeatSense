@@ -65,16 +65,6 @@ function scoreSpot(
   let availability = 0.5
   if (status && status.occupancy_percent !== null) {
     availability = 1 - (status.occupancy_percent / 100)
-    
-    // Check if data is old (>30 minutes)
-    const updatedAt = new Date(status.updated_at)
-    const now = new Date()
-    const ageMinutes = (now.getTime() - updatedAt.getTime()) / (1000 * 60)
-    
-    if (ageMinutes > 30) {
-      warnings.push('Occupancy data may be outdated')
-      availability = 0.5
-    }
   } else {
     warnings.push('Occupancy unknown - using neutral estimate')
   }

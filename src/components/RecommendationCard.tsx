@@ -39,10 +39,11 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
   const [noiseLevel, setNoiseLevel] = useState<'Quiet' | 'Medium' | 'Loud' | null>(
     (status?.noise_level as 'Quiet' | 'Medium' | 'Loud') || null
   );
+  const [lastUpdated, setLastUpdated] = useState(status?.updated_at || new Date().toISOString());
+  const [displayOccupancy, setDisplayOccupancy] = useState(status?.occupancy_percent || null);
+  const [displayNoiseLevel, setDisplayNoiseLevel] = useState(status?.noise_level || null);
 
-  const timeSinceUpdate = status
-    ? Math.round((Date.now() - new Date(status.updated_at).getTime()) / 60000)
-    : null;
+  const timeSinceUpdate = Math.round((Date.now() - new Date(lastUpdated).getTime()) / 60000);
 
   // Convert distance to miles and walking time
   const distanceMiles = (distance * 0.000621371).toFixed(2); // meters to miles
@@ -60,6 +61,11 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
       });
 
       if (error) throw error;
+
+      // Update local state with new values
+      setLastUpdated(new Date().toISOString());
+      setDisplayOccupancy(occupancy);
+      setDisplayNoiseLevel(noiseLevel);
 
       toast.success('Thanks for the update!', {
         description: 'Your feedback helps other students find the best spots.',
@@ -92,13 +98,13 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div className="flex items-center gap-2 text-sm">
-          <div className={`p-1.5 rounded-lg ${status?.occupancy_percent !== null ? 'bg-primary/10' : 'bg-muted'}`}>
+          <div className={`p-1.5 rounded-lg ${displayOccupancy !== null ? 'bg-primary/10' : 'bg-muted'}`}>
             <Users className="w-4 h-4 text-primary" />
           </div>
           <div>
             <div className="font-medium">
-              {status?.occupancy_percent !== null
-                ? `${status.occupancy_percent}% full`
+              {displayOccupancy !== null
+                ? `${displayOccupancy}% full`
                 : 'Unknown'}
             </div>
             <div className="text-xs text-muted-foreground">Occupancy</div>
@@ -106,11 +112,11 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
         </div>
 
         <div className="flex items-center gap-2 text-sm">
-          <div className={`p-1.5 rounded-lg ${status?.noise_level ? 'bg-accent/10' : 'bg-muted'}`}>
+          <div className={`p-1.5 rounded-lg ${displayNoiseLevel ? 'bg-accent/10' : 'bg-muted'}`}>
             <Volume2 className="w-4 h-4 text-accent" />
           </div>
           <div>
-            <div className="font-medium">{status?.noise_level || 'Unknown'}</div>
+            <div className="font-medium">{displayNoiseLevel || 'Unknown'}</div>
             <div className="text-xs text-muted-foreground">Noise Level</div>
           </div>
         </div>
@@ -130,9 +136,7 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
             <Clock className="w-4 h-4 text-secondary-foreground" />
           </div>
           <div>
-            <div className="font-medium">
-              {timeSinceUpdate !== null ? `${timeSinceUpdate}m ago` : 'N/A'}
-            </div>
+            <div className="font-medium">{timeSinceUpdate}m ago</div>
             <div className="text-xs text-muted-foreground">Last updated</div>
           </div>
         </div>
