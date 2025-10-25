@@ -42,6 +42,7 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
   const [lastUpdated, setLastUpdated] = useState(status?.updated_at || new Date().toISOString());
   const [displayOccupancy, setDisplayOccupancy] = useState(status?.occupancy_percent || null);
   const [displayNoiseLevel, setDisplayNoiseLevel] = useState(status?.noise_level || null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const timeSinceUpdate = Math.round((Date.now() - new Date(lastUpdated).getTime()) / 60000);
 
@@ -66,6 +67,7 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
       setLastUpdated(new Date().toISOString());
       setDisplayOccupancy(occupancy);
       setDisplayNoiseLevel(noiseLevel);
+      setIsDialogOpen(false);
 
       toast.success('Thanks for the update!', {
         description: 'Your feedback helps other students find the best spots.',
@@ -170,7 +172,7 @@ export const RecommendationCard = ({ recommendation, rank }: RecommendationCardP
         </p>
       </div>
 
-      <Dialog>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="w-full">
             Submit Quick Update

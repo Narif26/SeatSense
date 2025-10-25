@@ -159,7 +159,7 @@ const Index = () => {
                   className="gap-2"
                 >
                   <RotateCcw className="w-4 h-4" />
-                  Retune
+                  Refresh
                 </Button>
               </div>
               {recommendations.map((rec, index) => (
